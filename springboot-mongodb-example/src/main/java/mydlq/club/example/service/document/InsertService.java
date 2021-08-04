@@ -1,10 +1,15 @@
 package mydlq.club.example.service.document;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.mongodb.DBObject;
+import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import mydlq.club.example.entity.Status;
 import mydlq.club.example.entity.User;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,10 +25,12 @@ import java.util.List;
 @Service
 public class InsertService {
 
-    /** 设置集合名称 */
-    private static final String COLLECTION_NAME = "users";
+    /**
+     * 设置集合名称
+     */
+    private static final String COLLECTION_NAME = "wxPay";
 
-    @Resource
+    @Resourcez
     private MongoTemplate mongoTemplate;
 
     /**
@@ -49,13 +56,21 @@ public class InsertService {
         return newUser;
     }
 
+    public Object insertJson(String json) {
+        JSONObject parseObject = JSONObject.parseObject(json);
+        JSONObject ret = mongoTemplate.insert(parseObject, "class");
+
+        // 输出存储结果
+        log.info("存储的用户信息为：{}", ret);
+        return ret;
+    }
+
     /**
      * 插入【多条】文档数据，如果文档信息已经【存在就抛出异常】
      *
      * @return 插入的多个文档信息
-     *
      */
-    public Object insertMany(){
+    public Object insertMany() {
         // 设置两个用户信息
         User user1 = new User()
                 .setId("11")
